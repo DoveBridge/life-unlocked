@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>LIFE UNLOCKED: City of Dreams</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1a1f38">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;min-height:100%;background:#1a1f38;color:#fff;font-family:"Trebuchet MS",system-ui,sans-serif}
+#app{padding:10px 12px calc(20px + env(safe-area-inset-bottom));max-width:900px;margin:auto}
+.c{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+h1{margin:0;font-size:clamp(34px,9vw,58px);color:#ffd966}h2{margin:0;font-weight:400}p{margin:0;max-width:560px;line-height:1.4}
+.btn{background:#ffd966;color:#222;border:0;border-radius:16px;padding:12px 20px;font:700 18px inherit;font-family:inherit;margin:3px}
+.btn.sec{background:#3b4271;color:#fff}.btn.off{opacity:.4}
+#hd{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;font-weight:700;font-size:17px;position:sticky;top:0;background:#1a1f38;z-index:5}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:10px 0}
+.card{background:#262c52;border:2px solid #ffd966;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.card small{opacity:.8}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;align-items:flex-start}
+.cu{background:#2f3766;border-radius:16px;padding:8px;width:140px;text-align:center;border:2px solid transparent}
+.bub{background:#fff;color:#222;border-radius:12px;padding:4px 6px;font-size:18px;margin:4px 0}
+.pb{height:7px;background:#0006;border-radius:4px;overflow:hidden}.pb i{display:block;height:100%;background:#4ade80}
+.it{background:#3b4271;border-radius:14px;padding:10px;min-width:104px;text-align:center;font-size:15px}
+.it b{display:block;font-size:30px}.rd{background:#16a34a}.sel{border:3px solid #ffd966}
+.pot{background:#5a3a22;border-radius:50%/40%;padding:14px 10px;min-width:130px;text-align:center}
+.fl{position:fixed;font-size:44px;pointer-events:none;transform:translate(-50%,-50%);z-index:30}
+#msg{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#1a1f38ee;border:2px solid #ffd966;border-radius:14px;padding:8px 18px;font-weight:700;font-size:19px;z-index:40;text-align:center}
+.hide{display:none}.dec{font-size:28px}
+</style></head><body><div id="app"></div><div id="msg" class="hide"></div>
+<script>
+const $=id=>document.getElementById(id),KEY='lu_save_v2',ev=n=>Math.floor(Math.random()*n);
+const RS=[
+['Mama Put Bakery','🥧','#c0392b',[['Meat pie','🥧',60,5],['Cola','🥤',30,0],['Agege bread','🍞',50,5],['Doughnut','🍩',40,4],['Samosa','🥟',45,5],['Puff puff','🟠',35,4],['Cake','🍰',90,7],['Sausage roll','🌭',55,5]]],
+['Iya Alaro Amala Joint (Yoruba)','🥣','#8e5a2b',[]],
+['Hausa Suya Spot','🍢','#d35400',[['Beef suya','🍢',100,6],['Kunu','🥛',40,0],['Masa','🥞',40,4],['Kilishi','🥩',80,5]]],
+['Jollof Palace','🍛','#e74c3c',[['Jollof rice','🍛',120,6],['Chapman','🍹',60,0],['Fried plantain','🍌',40,4],['Grilled chicken','🍗',110,7]]],
+['Mama Nkechi (Igbo)','🍲','#27ae60',[['Abacha','🥗',90,5],['Palm wine','🍶',50,0],['Nkwobi','🍖',130,7],['Ofe Onugbu & fufu','🍲',140,8]]],
+['Calabar Efik Kitchen','🥬','#16a085',[['Edikang ikong','🥬',140,8],['Zobo','🥤',30,0],['Afang soup','🍲',140,8],['Ekpang nkukwo','🌽',110,7]]],
+['Niger Delta Fish Joint','🐟','#2980b9',[['Bole & fish','🍌',100,6],['Palm wine','🍶',50,0],['Fisherman soup','🍲',150,8],['Starch & banga','🍲',140,8]]],
+['Tiv Yam Kitchen','🍠','#d68910',[['Yam pottage','🍠',90,6],['Kunu','🥛',30,0],['Roasted corn','🌽',35,4],['Pounded yam','🥣',110,6]]],
+['Edo Soup House','🥘','#7d3c98',[['Banga soup','🥘',140,8],['Burukutu','🍶',50,0],['Owo soup','🥘',150,8],['Ukodo','🍖',160,8]]],
+['Accra Waakye Stop (Ghana)','🍚','#f1c40f',[['Waakye','🍚',100,6],['Sobolo','🥤',35,0],['Kenkey & fish','🐟',90,6],['Light soup & fufu','🍲',130,8]]],
+['Addis Injera House (Ethiopia)','🫓','#c0392b',[['Injera','🫓',60,4],['Tej','🍯',60,0],['Doro wat','🍗',140,8],['Tibs','🥩',130,7]]],
+['Dakar Thieb (Senegal)','🐟','#1abc9c',[['Thieboudienne','🍚',150,8],['Bissap','🥤',35,0],['Yassa','🍗',130,7],['Fataya','🥟',50,4]]],
+['Nairobi Nyama Choma (Kenya)','🍖','#e67e22',[['Nyama choma','🍖',150,8],['Chai','🍵',30,0],['Ugali','⚪',50,5],['Sukuma wiki','🥬',45,4]]],
+['Joburg Braai (South Africa)','🔥','#2c3e50',[['Boerewors','🌭',100,6],['Rooibos','🍵',30,0],['Bunny chow','🍞',90,6],['Pap','⚪',40,4]]],
+['Marrakech Tagine (Morocco)','🏺','#b9770e',[['Tagine','🏺',150,8],['Mint tea','🍵',30,0],['Couscous','🍚',100,6],['Msemen','🫓',45,4]]],
+['Douala Ndole (Cameroon)','🥬','#1e8449',[['Ndole','🥬',140,8],['Bissap','🥤',35,0],['Koki','🌿',90,6],['Miondo','🥖',50,4]]],
+['Kinshasa Moambe (Congo)','🍗','#a04000',[['Moambe chicken','🍗',140,8],['Tangawisi','🥤',35,0],['Pondu','🥬',90,6],['Chikwangue','🌿',50,4]]]];
+const SOUP=['Ewedu','Gbegiri'],PROT=['Beef','Goat meat','Chicken','Turkey','Cow skin (ponmo)'];
+const UPN=[['Kitchen slot','Seat','Faster ovens'],['Amala stove','Soup stove','Calabash plate']];
+const DEC=[['Ankara wall cloth','🧵',250,0],['Calabash set','🥣',300,0],['Animal skin','🐆',500,0],['Wooden cross','✝️',400,0],['Charm strings','🧿',0,200],['Portrait: Elder','🧓🏾',0,500],['Portrait: Queen','👸🏾',0,1000],['Ancestral mask','🎭',0,1500]];
+const mx=i=>i==1?30:20,fresh=()=>({coins:300,cl:RS.map(()=>0),up:RS.map(()=>[0,0,0]),dec:[]});
+let S=fresh(),G=null,view='menu',cur=0,mt,AC,dr=null;
+try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cl&&d.up){S=Object.assign(fresh(),d)}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+function tone(f,d,t=0){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+t;o.frequency.value=f;o.connect(g);g.connect(AC.destination);g.gain.setValueAtTime(.15,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
+const sClick=()=>tone(880,.05),sCoin=()=>{tone(988,.08);tone(1319,.1,.08)},sBad=()=>tone(220,.15);
+function msg(t){const m=$('msg');m.textContent=t;m.classList.remove('hide');clearTimeout(mt);mt=setTimeout(()=>m.classList.add('hide'),1800)}
+function person(seed){const r=n=>{seed=(seed*9301+49297)%233280;return Math.floor(seed/233280*n)};const sk=['#8d5524','#c68642','#5c3a1e','#a0673a'][r(4)],c1=['#e63946','#2a9d8f','#f4a261','#6a4c93','#1d7874','#ffb703'][r(6)],c2=['#fff','#ffd166','#06d6a0','#118ab2'][r(4)],f=r(2);
+return `<svg viewBox="0 0 60 80" width="62"><rect x="10" y="38" width="40" height="42" rx="12" fill="${c1}"/>${[0,1,2,3,4,5].map(i=>`<circle cx="${18+i%3*12}" cy="${50+Math.floor(i/3)*14}" r="3.4" fill="${c2}"/>`).join('')}<circle cx="30" cy="27" r="13" fill="${sk}"/>${f?`<path d="M13 26 Q14 4 30 6 Q47 4 47 26 Q42 14 30 14 Q18 14 13 26Z M30 6 L40 -1 L38 9Z" fill="${c1}" stroke="${c2}" stroke-width="1.5"/>`:`<path d="M17 20 Q30 4 43 20 L43 15 Q30 3 17 15Z" fill="${c1}"/><rect x="17" y="13" width="26" height="5" rx="2" fill="${c2}"/>`}<circle cx="25" cy="28" r="1.6" fill="#222"/><circle cx="35" cy="28" r="1.6" fill="#222"/><path d="M26 33 Q30 36 34 33" stroke="#222" fill="none"/></svg>`}
+const its=(ri,lv)=>RS[ri][3].slice(0,Math.min(RS[ri][3].length,2+Math.floor((lv-1)/3)));
+const soups=()=>SOUP.slice(0,G.lv>=4?2:1),prots=()=>PROT.slice(0,Math.min(5,1+Math.floor((G.lv-1)/3)));
+function play(ri){cur=ri;const u=S.up[ri],lv=Math.min(S.cl[ri]+1,mx(ri)),t=lv%3==0;
+G={ri,lv,done:0,t:0,sp:0,id:0,custs:[],tray:{},over:0,
+goal:{timed:t,n:t?Math.min(4+lv,15):Math.min(3+lv,20),T:t?Math.max(90,420-lv*12):0},
+sl:Array(2+u[0]).fill().map(()=>({i:-1,t:0,r:0})),
+pots:Array(1+u[0]).fill().map(()=>({s:'idle',t:0,st:0})),sv:Array(1+u[1]).fill().map(()=>({k:null,t:0})),
+pl:Array(3+u[2]).fill().map(()=>({a:0,s:null,p:null})),as:0,ss:{},sel:0};
+view='game';render()}
+function gen(){if(G.ri==1){const s=soups(),p=prots(),n=1+(G.lv>=3&&ev(2)?1:0)+(G.lv>=10&&ev(2)?1:0),L=[];for(let j=0;j<n;j++)L.push({s:s[ev(s.length)],p:p[ev(p.length)]});return L}
+const it=its(G.ri,G.lv),pool=it.map((_,i)=>i),k=1+ev(Math.min(3,it.length)),L=[];for(let j=0;j<k;j++){L.push({i:pool.splice(ev(pool.length),1)[0],q:1+(G.lv>1&&ev(3)==0?1:0)})}return L}
+function tick(){if(view!='game'||!G||G.over)return;const dt=.25,u=S.up[G.ri];G.t+=dt;
+if(G.goal.timed&&G.t>=G.goal.T){G.over=1;view='end';render();return}
+G.sp-=dt;const seats=G.ri==1?3:2+u[1];if(G.sp<=0&&G.custs.length<seats){const pm=Math.max(25,55-G.lv);G.custs.push({id:++G.id,seed:ev(99999)+1,lines:gen(),p:pm,pm,pay:0});G.sp=Math.max(4,11-G.lv*.3)}
+G.custs=G.custs.filter(c=>(c.p-=dt)>0);
+G.sl.forEach(s=>{if(s.i>=0&&!s.r){s.t-=dt;if(s.t<=0)s.r=1}});
+G.pots.forEach(p=>{if(p.s=='boil'){p.t-=dt;if(p.t<=0)p.s='hot'}});
+G.sv.forEach(s=>{if(s.k){s.t-=dt;if(s.t<=0){G.ss[s.k]=(G.ss[s.k]||0)+3;s.k=null;sCoin()}}});
+render()}
+setInterval(tick,250);setInterval(save,5000);
+function fin(c,pay){pay+=Math.round(pay*.3*c.p/c.pm);S.coins+=pay;sCoin();msg('+'+pay+' coins');G.custs=G.custs.filter(x=>x!=c);G.done++;
+if(G.done>=G.goal.n){const b=100+G.lv*20;S.coins+=b;S.cl[G.ri]=Math.max(S.cl[G.ri],G.lv);G.over=2;G.bonus=b;view='end'}save()}
+function srv(id){const c=G.custs.find(x=>x.id==id);if(!c)return;
+if(G.ri==1){const P=G.pl[G.sel],i=c.lines.findIndex(l=>l.s==P.s&&l.p==P.p);if(!P.a||i<0){sBad();msg('This plate does not match the order');return}
+c.pay+=150+PROT.indexOf(P.p)*20;c.lines.splice(i,1);P.a=0;P.s=P.p=null;sCoin();if(!c.lines.length)fin(c,c.pay);return}
+const T=RS[G.ri][3];for(const l of c.lines)if((G.tray[l.i]||0)<l.q){sBad();msg('Missing items on your tray');return}
+let pay=0;for(const l of c.lines){G.tray[l.i]-=l.q;pay+=T[l.i][2]*l.q}fin(c,pay)}
+function act(a){sClick();const [k,x,y]=a.split(':');
+if(k=='new'){S=fresh();save();view='map'}else if(k=='cont')view='map';else if(k=='map')view='map';else if(k=='shop')view='shop';
+else if(k=='play')return play(+x);else if(k=='again')return play(cur);
+else if(k=='srv')return srv(+x);
+else if(k=='cook'){const it=RS[G.ri][3][+x];if(!it[3]){G.tray[x]=(G.tray[x]||0)+1;return}const s=G.sl.find(s=>s.i<0);if(!s){msg('Kitchen is full');return}s.i=+x;s.t=it[3]*(1-.15*S.up[G.ri][2]);s.r=0}
+else if(k=='take'){const s=G.sl[+x];if(s.r){G.tray[s.i]=(G.tray[s.i]||0)+1;s.i=-1;s.r=0}}
+else if(k=='pot'){const p=G.pots[+x];if(p.s=='idle'){p.s='boil';p.t=5}else if(p.s=='in'){p.st++;if(p.st>=5){p.s='idle';p.st=0;G.as+=3;sCoin();msg('Amala is ready: +3 portions')}}else if(p.s=='hot')msg('Drag the amala powder into the pot')}
+else if(k=='cs'){const s=G.sv[+x];if(!s.k){s.k=y;s.t=8}}
+else if(k=='pl')G.sel=+x;
+else if(k=='add'){const P=G.pl[G.sel];if(x=='a'){if(!P.a&&G.as>0){P.a=1;G.as--}}else if(x=='s'){if(!P.s&&(G.ss[y]||0)>0){P.s=y;G.ss[y]--}else if(!P.s)msg('Cook some '+y+' first')}else if(!P.p)P.p=y}
+else if(k=='clr'){const P=G.pl[G.sel];P.a=0;P.s=P.p=null}
+else if(k=='up'){const u=S.up[cur],c=150*(u[+x]+1);if(u[+x]>=3)return;if(S.coins<c){sBad();msg('Not enough coins! Need '+c);return}S.coins-=c;u[+x]++;sCoin();save()}
+else if(k=='dec'){const d=DEC[+x];if(S.dec.includes(+x)||d[3])return;if(S.coins<d[2]){sBad();msg('Not enough coins! Need '+d[2]);return}S.coins-=d[2];S.dec.push(+x);sCoin();save()}
+render()}
+document.addEventListener('pointerup',e=>{if(dr){dr.remove();dr=null;const t=document.elementFromPoint(e.clientX,e.clientY),p=t&&t.closest('[data-pot]');if(p&&G){const o=G.pots[+p.dataset.pot];if(o.s=='hot'){o.s='in';o.st=0;msg('Tap the pot to stir (5 times)');sClick()}else msg('Boil the water first')}render();return}
+const t=e.target.closest('[data-a]');if(t&&!t.classList.contains('off'))act(t.dataset.a)});
+document.addEventListener('pointerdown',e=>{if(e.target.closest('[data-sack]')){dr=document.createElement('div');dr.className='fl';dr.textContent='🌾';document.body.appendChild(dr);mv(e)}});
+document.addEventListener('pointermove',mv);function mv(e){if(dr){dr.style.left=e.clientX+'px';dr.style.top=e.clientY+'px'}}
+const hd=t=>`<div id="hd"><span>${t}</span><span>🪙 ${S.coins}</span></div>`;
+function render(){const a=$('app');let h='';
+if(view=='menu')h=`<div class="c"><h1>LIFE UNLOCKED</h1><h2>City of Dreams</h2><p>From Zero to Icon. Cook and serve across Nigeria and Africa, clear levels, unlock new restaurants.</p><button class="btn" data-a="cont">Play</button><button class="btn sec" data-a="new">New Game (erases save)</button></div>`;
+else if(view=='map')h=hd('Choose a restaurant')+`<div class="g">`+RS.map((r,i)=>{const ok=i==0||S.cl[i-1]>=20;return `<div class="card" style="border-color:${r[2]}"><b>${r[1]} ${r[0]}</b><small>${ok?'Cleared '+S.cl[i]+' of '+mx(i)+' levels':'Locked: clear 20 levels of '+RS[i-1][0]}</small>${ok?`<button class="btn" data-a="play:${i}">Play level ${Math.min(S.cl[i]+1,mx(i))}</button>`:''}</div>`}).join('')+`</div><button class="btn sec" data-a="shop">Shop and upgrades</button>`;
+else if(view=='shop'){const u=S.up[cur];h=hd('Shop: '+RS[cur][0])+`<div class="g">`+UPN[cur==1?1:0].map((n,i)=>`<div class="card"><b>${n} (${u[i]}/3)</b><button class="btn ${u[i]>=3?'off':''}" data-a="up:${i}">${u[i]>=3?'Maxed':'Upgrade: '+150*(u[i]+1)+' coins'}</button></div>`).join('')+DEC.map((d,i)=>`<div class="card"><b class="dec">${d[1]} ${d[0]}</b>${d[3]?`<button class="btn off">Premium: N${d[3]} (payments coming)</button>`:`<button class="btn ${S.dec.includes(i)?'off':''}" data-a="dec:${i}">${S.dec.includes(i)?'Owned':d[2]+' coins'}</button>`}</div>`).join('')+`</div><button class="btn sec" data-a="map">Back to map</button>`}
+else if(view=='end')h=`<div class="c"><h1>${G.over==2?'Level cleared!':'Time is up'}</h1><p>${G.over==2?'Bonus: +'+G.bonus+' coins':'Try again, you can do it.'}</p><button class="btn" data-a="again">${G.over==2?'Next level':'Retry'}</button><button class="btn sec" data-a="map">Restaurant map</button></div>`;
+else if(view=='game'){const r=RS[G.ri],g=G.goal,left=Math.max(0,Math.ceil(g.T-G.t));
+h=hd(`${r[1]} Level ${G.lv}: ${G.done}/${g.n} orders${g.timed?' in '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0'):''}`)+`<div class="dec">${S.dec.map(i=>DEC[i][1]).join(' ')}</div><div class="row">`+G.custs.map(c=>`<div class="cu" data-a="srv:${c.id}">${person(c.seed)}<div class="bub">${c.lines.map(l=>G.ri==1?'🥣 '+l.s+' + '+l.p:r[3][l.i][1]+'×'+l.q).join('<br>')}</div><div class="pb"><i style="width:${c.p/c.pm*100}%"></i></div></div>`).join('')+`</div>`;
+if(G.ri==1){h+=`<div class="row">`+G.pots.map((p,i)=>`<div class="pot" data-pot="${i}" data-a="pot:${i}">🍲<br>${p.s=='idle'?'Tap to light cooker':p.s=='boil'?'Boiling '+Math.ceil(p.t)+'s':p.s=='hot'?'Drag powder here':'Stir '+p.st+'/5'}</div>`).join('')+`<div class="it" data-sack="1"><b>🌾</b>Drag amala powder</div></div><div class="row">`+G.sv.map((s,i)=>s.k?`<div class="it">🍲 ${s.k}<br>${Math.ceil(s.t)}s</div>`:`<div class="it">Soup stove<br>${soups().map(n=>`<button class="btn sec" data-a="cs:${i}:${n}">${n}</button>`).join('')}</div>`).join('')+`<div class="it">Stock<br>Amala ${G.as}<br>${soups().map(n=>n+' '+(G.ss[n]||0)).join('<br>')}</div></div><div class="row">`+G.pl.map((p,i)=>`<div class="it ${i==G.sel?'sel':''}" data-a="pl:${i}"><b>🥣</b>${p.a?'Amala':'-'}<br>${p.s||'-'}<br>${p.p||'-'}</div>`).join('')+`</div><div class="row"><button class="btn sec" data-a="add:a">+ Amala</button>`+soups().map(n=>`<button class="btn sec" data-a="add:s:${n}">+ ${n}</button>`).join('')+prots().map(n=>`<button class="btn sec" data-a="add:p:${n}">+ ${n}</button>`).join('')+`<button class="btn sec" data-a="clr">Empty plate</button></div>`}
+else{h+=`<div class="row">`+its(G.ri,G.lv).map((it,i)=>`<div class="it" data-a="cook:${i}"><b>${it[1]}</b>${it[0]}<br>${it[3]?it[3]+'s':'instant'}</div>`).join('')+`</div><div class="row">`+G.sl.map((s,i)=>s.i<0?`<div class="it">Empty slot</div>`:`<div class="it ${s.r?'rd':''}" data-a="take:${i}"><b>${r[3][s.i][1]}</b>${s.r?'Ready! Tap':Math.ceil(s.t)+'s'}</div>`).join('')+`</div><div class="row">Tray: `+Object.keys(G.tray).filter(k=>G.tray[k]>0).map(k=>`<span class="bub">${r[3][k][1]}×${G.tray[k]}</span>`).join('')+`</div>`}
+h+=`<button class="btn sec" data-a="map">Leave restaurant</button>`}
+a.innerHTML=h}
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
